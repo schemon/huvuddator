@@ -1,0 +1,42 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<style type="text/css">h1 {display:inline;}input {width:200px;height:120px;font-size:40px;}</style>
+<input type="button" value="Off" class="light-switch" default-value="Off" status="off">
+<h1>Fixa lyset</h1>
+<input type="button" value="On" class="light-switch" default-value="On" status="on">
+<br>
+<div id="cam_img_holder">
+	<img src="motion/cam.jpg">
+</div>
+<script>
+updateCam = function(){
+	timestamp = new Date().getTime();
+	var src = 'motion/cam.jpg?' +timestamp;
+	$('#cam_img_holder img').attr('src', src);
+};
+updateCam();
+$('.light-switch').click( function() {
+  var status = $(this).attr('status');
+  $(this).attr('disabled', 'disabled');
+  var url = status + '.py';
+  console.log('url ' + url);
+  var data = {'fb_token': window.fb_token, 'action': status};
+  console.log(data);
+  $.ajax({
+    url: 'src/power.py',
+    data: data, 
+    context: document.body
+  }).done(function(resp, b, c, d) {
+   console.log(resp);
+    updateCam();
+    var new_status;
+    var button = $('#button-on');
+    if(button.attr('status') == 'on') {
+      new_status = 'off';
+    } else {
+      new_status = 'on';
+    }
+      $('.light-switch').removeAttr('disabled');
+  });
+});
+</script>
+

@@ -1,0 +1,84 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<div id="content"></div>
+<input type="button" value="Login" id="login" style="display: none;width:200px;height:120px;font-size:40px;">
+<input type="button" value="Logout" id="logout" style="display: none;width:200px;height:120px;font-size:40px;">
+
+<div id="fb-root"></div>
+
+<script>
+if(navigator.userAgent.match(/Android/i)){ window.scrollTo(0,1); }
+loadPanel = function(token) {
+		var data = {fb_token: token};
+	
+		console.log(data);	
+		$.ajax({
+			url: 'main.py',
+			data: data
+			}).done(function(resp) {
+				console.log('resp:');
+				console.log(resp);
+				$('#content').html(resp.html);
+			});
+	}; 
+
+	var onLoginChange = function(response) {
+        	if (response.status == 'connected') {
+			window.fb_token = response.authResponse.accessToken;
+			loadPanel(response.authResponse.accessToken);
+                        $('#logout').show();
+                        $('#login').hide();
+		} else {
+			$('#logout').hide();
+			$('#login').show();
+			$('#content').html('');
+		}
+	}
+
+	
+        $("#login").click(function() {
+                FB.login(function(response) {
+                      	onLoginChange(response);
+                });
+                return false;
+        });
+
+        $("#logout").click(function() {
+                FB.logout(function(response) {
+                        onLoginChange(response);
+                });
+        });
+
+
+
+	if(document.domain == 'localhost') {
+		var facebookAppId = 443420972362652;
+	} else {
+		var facebookAppId = 397238753641020;
+	}
+	
+	window.fbAsyncInit = function() {
+		FB.init({
+			channelUrl: 'http://www.huvuddator.se/', 
+			appId: 131421060382342,
+			status : true, // check login status
+			cookie : true, // enable cookies to allow the server to access the session
+			xfbml : true
+			// parse XFBML
+		});
+
+		FB.getLoginStatus(function(response) {
+			onLoginChange(response);
+		});
+		// Additional initialization code here
+	};
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+</script>
+
