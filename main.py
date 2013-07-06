@@ -10,10 +10,8 @@ except KeyError, e:
 
 result = auth.verify()
 htmlData = '<h1>Nej du!</h1>'
-proc = subprocess.Popen('fswebcam -d /dev/video0 -r 640x480 /var/www/motion/cam.jpg', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-out, htmlData = proc.communicate()
 if result:
-        #subprocess.call(['/var/www/script/take_picture.sh'])
+	proc = subprocess.Popen('fswebcam -d /dev/video0 -r 640x480 /var/www/motion/cam.jpg', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	htmlData = html.load('main')
 
 jsonData = {'result': result, 'html': htmlData}
